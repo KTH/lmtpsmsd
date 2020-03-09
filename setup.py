@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="lmtpsmsd-abokth", # Replace with your own username
+    name="lmtpsmsd",
     version="0.0.1",
     author="Alexander Boström",
     author_email="abo@kth.se",
