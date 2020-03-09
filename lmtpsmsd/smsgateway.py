@@ -40,7 +40,7 @@ class SMSGateway(LMTPSocketServer):
         self.logger = logging.getLogger("smsgateway")
 
     def process_message(self, peer, mailfrom, rcptto, data):
-        number = rcptto.decode("ascii").lstrip("<").rstrip(">")
+        number = rcptto.decode("ascii").lstrip("<").rstrip(">").split("@")[0]
 
         self.logger.info("Process message to {}:".format(number))
 
