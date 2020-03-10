@@ -47,9 +47,11 @@ class SMSGateway(LMTPSocketServer):
 
         msg = email.message_from_bytes(data)
 
+        sender = str(msg.get('From'))
+        sender = (sender.split("<")[1].split(">")[0]) if "<" in sender else sender
         subject = str(msg.get('Subject'))
         contentbytes = str(msg.get_payload())
-        smsmsg = "{}\n{}".format(subject, content)
+        smsmsg = "{} {}\n{}".format(sender, subject, content)
 
         sms_split = smsutil.split(smsmsg)
 
