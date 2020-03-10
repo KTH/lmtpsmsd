@@ -35,7 +35,7 @@ def get_activation_socket():
     def sock_from_fd(fd):
         if is_socket(fd):
             if is_socket_unix(fd):
-                return socket.socket(family=socket.AF_UNIX, type=SOCK_STREAM, fileno=fd)
+                return socket.socket(family=socket.AF_UNIX, type=socket.SOCK_STREAM, fileno=fd)
             for fam in [socket.AF_INET6, socket.AF_INET]:
                 for t in [socket.SOCK_STREAM]:
                     if is_socket(fd, family=fam, type=t):
