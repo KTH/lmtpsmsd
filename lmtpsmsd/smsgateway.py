@@ -50,7 +50,7 @@ class SMSGateway(LMTPSocketServer):
         sender = str(msg.get('From'))
         sender = (sender.split("<")[1].split(">")[0]) if "<" in sender else sender
         subject = str(msg.get('Subject'))
-        contentbytes = str(msg.get_payload())
+        content = str(msg.get_payload())
         smsmsg = "{} {}\n{}".format(sender, subject, content)
 
         sms_split = smsutil.split(smsmsg)
