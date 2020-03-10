@@ -1,3 +1,4 @@
 pyserial
 lmtpd
 systemd-python
+smsutil
