@@ -29,6 +29,7 @@ __all__ = ["SMSGateway"]
 import sys
 import logging
 import email
+import smsutil
 
 from ._private.socketlmtpd import LMTPSocketServer
 
@@ -46,10 +47,19 @@ class SMSGateway(LMTPSocketServer):
 
         msg = email.message_from_bytes(data)
 
+        subject = str(msg.get('Subject'))
+        contentbytes = str(msg.get_payload())
+        smsmsg = "{}\n{}".format(subject, content)
+
+        sms_split = smsutil.split(smsmsg)
+
         # TODO allow other encodings
-        subjectbytes = str(msg.get('Subject')).encode("ascii", errors='replace')
-        contentbytes = str(msg.get_payload()).encode("ascii", errors='replace')
-        bytemsg = (subjectbytes + b'\n' + contentbytes)[:160]
+        if sms_split.encoding != 'gsm0338':
+            self.logger.error("Failed, message contains illegal characters.")
+            return "Only gsm0338 clean characters currently allowed."
+
+        # TODO implement chaining parts
+        bytemsg = smsutil.encode(sms_split.parts[0].content)
 
         try:
             self.smsdevice.sendsms(number, bytemsg)
