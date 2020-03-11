@@ -1,0 +1,11 @@
+[Unit]
+Description=lmtpsmsd
+
+[Socket]
+ListenStream=/run/lmtpsmsd
+SocketUser=root
+SocketGroup=postfix
+SocketMode=0660
+
+[Install]
+WantedBy=sockets.target
