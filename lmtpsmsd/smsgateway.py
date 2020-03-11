@@ -60,8 +60,8 @@ class SMSGateway(LMTPSocketServer):
         try:
             self.smsdevice.sendpdusms(pdumessage)
         except Exception as e:
-            self.logger.error("Error: {}".format(e), file=sys.stderr)
+            self.logger.error("{}".format(e))
             self.smsdevice.disconnect()
-            return str(e)
+            return "450 {}".format(e).encode("UTF-8", errors='ignore')
         return None
 
