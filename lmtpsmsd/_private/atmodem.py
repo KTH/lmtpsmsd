@@ -88,17 +88,12 @@ class ATSerial(DebugLockingSerial):
         if not res:
             raise Exception("Could not send PIN")
 
-    def sendsms(self, to, bytemsg):
-        self.command("AT+CMGF=1", tries=1)
-        self.send('AT+CMGS="{}"'.format(to))
+    def sendpdusms(self, pdumessage):
+        self.command("AT+CMGF=0", tries=1)
+        self.send('AT+CMGS={}'.format(pdumessage.tpdu_octet_length()))
         if not self.waitforbuf((lambda s: s if (s.startswith("> ")) else None), completeline=False, tries=30):
             raise Exception("Cannot initiate submitting SMS.")
-        for part in bytemsg.split(b"\r"):
-            self.write(part)
-            self.write(b"\r")
-            self.flush()
-            if not self.waitforbuf((lambda s: s if (s.startswith("> ")) else None), completeline=False, tries=30):
-                raise Exception("No response while submitting SMS.")
+        self.write(pdumessage.hex().encode("ascii"))
         self.write(b'\x1a\r')
         self.flush()
         if not self.waitforbuf(lambda s: s if (s.startswith("+CMGS:")) else None):

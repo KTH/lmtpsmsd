@@ -83,14 +83,14 @@ class SMSDevice():
             self.atmodem.__exit__()
             self.atmodem = None
 
-    def sendsms(self, *args, **kwargs):
+    def sendpdusms(self, *args, **kwargs):
         self.connect()
         success = False
         try:
             self.logger.info("Sending SMS")
 
             self.atmodem.ping()
-            self.atmodem.sendsms(*args, **kwargs)
+            self.atmodem.sendpdusms(*args, **kwargs)
             success = True
         finally:
             if not success:

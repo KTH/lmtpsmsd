@@ -29,9 +29,9 @@ __all__ = ["SMSGateway"]
 import sys
 import logging
 import email
-import smsutil
 
 from ._private.socketlmtpd import LMTPSocketServer
+from ._private.pdu import TextMessage
 
 class SMSGateway(LMTPSocketServer):
     """LMTP socket server with SMS delivery"""
@@ -53,18 +53,12 @@ class SMSGateway(LMTPSocketServer):
         content = str(msg.get_payload())
         smsmsg = "{} {}\n{}".format(sender, subject, content)
 
-        sms_split = smsutil.split(smsmsg)
-
-        # TODO allow other encodings
-        if sms_split.encoding != 'gsm0338':
-            self.logger.error("Failed, message contains illegal characters.")
-            return "Only gsm0338 clean characters currently allowed."
-
+        textmessage = TextMessage(number, smsmsg)
         # TODO implement chaining parts
-        bytemsg = smsutil.encode(sms_split.parts[0].content)
+        pdumessage = list(textmessage.parts())[0]
 
         try:
-            self.smsdevice.sendsms(number, bytemsg)
+            self.smsdevice.sendpdusms(pdumessage)
         except Exception as e:
             self.logger.error("Error: {}".format(e), file=sys.stderr)
             self.smsdevice.disconnect()
